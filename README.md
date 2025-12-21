@@ -1,7 +1,7 @@
 # Profile README
 This is my first Git Repository.
 <br>
-Author- Iam komara Aswini 
+Iam komara Aswini 
 <br>
 Iam a student is Sreenidhi university, Ghatkesar - Hyderbad
 <br>
