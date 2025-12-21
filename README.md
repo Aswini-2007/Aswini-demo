@@ -7,5 +7,5 @@ Iam a student is Sreenidhi university, Ghatkesar - Hyderbad
 <br>
 Iam Currently iam Pursuing my BTech in CSE branch 
 <br>
-Iam good at C-programming.  
+Interested in programming languages 
 
