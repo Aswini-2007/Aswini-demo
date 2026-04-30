@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart School Timetable</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --bg: #f8fafc;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        input, select, button {
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input:focus { border-color: var(--primary); }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover { opacity: 0.9; }
+
+        .btn-clear { background: #ef4444; }
+
+        /* Timetable Styling */
+        .table-wrapper { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .time-col {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #64748b;
+            width: 100px;
+        }
+
+        /* Dynamic Subject Tags */
+        .subject-tag {
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: block;
+        }
+
+        /* Subject Colors */
+        .color-math { background: #dbeafe; color: #1e40af; border-left: 4px solid #1e40af; }
+        .color-science { background: #dcfce7; color: #166534; border-left: 4px solid #166534; }
+        .color-english { background: #fef9c3; color: #854d0e; border-left: 4px solid #854d0e; }
+        .color-history { background: #fee2e2; color: #991b1b; border-left: 4px solid #991b1b; }
+        .color-default { background: #f1f5f9; color: #475569; border-left: 4px solid #475569; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Academic Calendar 2026</h1>
+        <p>Manage your weekly subjects and lecture timings</p>
+    </header>
+
+    <div class="controls">
+        <input type="text" id="subjectInput" placeholder="Subject (e.g., Math, Science)">
+        <select id="dayInput">
+            <option value="1">Monday</option>
+            <option value="2">Tuesday</option>
+            <option value="3">Wednesday</option>
+            <option value="4">Thursday</option>
+            <option value="5">Friday</option>
+        </select>
+        <input type="time" id="timeInput">
+        <button onclick="handleAdd()">Add Subject</button>
+        <button class="btn-clear" onclick="clearAll()">Reset All</button>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th class="time-col">Time</th>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                </tr>
+            </thead>
+            <tbody id="timetableBody">
+                </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Initial Default Subjects
+    const defaultData = [
+        { name: "Mathematics", day: 1, time: "09:00" },
+        { name: "Physics", day: 2, time: "09:00" },
+        { name: "English", day: 3, time: "10:30" },
+        { name: "History", day: 1, time: "11:00" },
+        { name: "Computer Science", day: 5, time: "14:00" }
+    ];
+
+    window.onload = () => {
+        const saved = localStorage.getItem('myTimetable');
+        if (saved) {
+            document.getElementById('timetableBody').innerHTML = saved;
+        } else {
+            // Load defaults if storage is empty
+            defaultData.forEach(item => renderSubject(item.name, item.day, item.time));
+        }
+    };
+
+    function handleAdd() {
+        const name = document.getElementById('subjectInput').value;
+        const day = document.getElementById('dayInput').value;
+        const time = document.getElementById('timeInput').value;
+
+        if (!name || !time) return alert("Please enter subject and time");
+
+        renderSubject(name, day, time);
+        document.getElementById('subjectInput').value = '';
+        saveToStorage();
+    }
+
+    function renderSubject(name, day, time) {
+        const tbody = document.getElementById('timetableBody');
+        let row = document.querySelector(`tr[data-time="${time}"]`);
+
+        if (!row) {
+            row = document.createElement('tr');
+            row.setAttribute('data-time', time);
+            row.innerHTML = `<td class="time-col">${time}</td><td></td><td></td><td></td><td></td><td></td>`;
+            tbody.appendChild(row);
+            sortRows();
+        }
+
+        // Determine color class based on subject name
+        let colorClass = "color-default";
+        const lowerName = name.toLowerCase();
+        if (lowerName.includes("math")) colorClass = "color-math";
+        else if (lowerName.includes("scien") || lowerName.includes("phys") || lowerName.includes("chem")) colorClass = "color-science";
+        else if (lowerName.includes("eng")) colorClass = "color-english";
+        else if (lowerName.includes("hist")) colorClass = "color-history";
+
+        const cells = row.querySelectorAll('td');
+        cells[day].innerHTML = `<span class="subject-tag ${colorClass}">${name}</span>`;
+    }
+
+    function sortRows() {
+        const tbody = document.getElementById('timetableBody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort((a, b) => a.getAttribute('data-time').localeCompare(b.getAttribute('data-time')));
+        rows.forEach(row => tbody.appendChild(row));
+    }
+
+    function saveToStorage() {
+        localStorage.setItem('myTimetable', document.getElementById('timetableBody').innerHTML);
+    }
+
+    function clearAll() {
+        if (confirm("Delete all subjects?")) {
+            localStorage.removeItem('myTimetable');
+            location.reload();
+        }
+    }
+</script>
+
+</body>
+</html>
