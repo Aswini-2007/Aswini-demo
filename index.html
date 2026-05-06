@@ -1,100 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>School Timetable 2026</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Timetable and Schedule Management</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f2f4f7;
-    margin: 0;
-    padding: 20px;
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
 
-.container {
-    max-width: 1100px;
-    margin: auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
 
-h1 {
-    text-align: center;
-    margin-bottom: 5px;
-}
+        .container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 1100px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+        }
 
-.subtitle {
-    text-align: center;
-    color: #666;
-    margin-bottom: 20px;
-}
+        h1 {
+            text-align: center;
+            color: #1e293b;
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
 
-.controls {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-}
+        p.subtitle {
+            text-align: center;
+            color: #475569;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
 
-.controls input, .controls select {
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
+        .controls {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
 
-.controls button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-}
+        .controls input, .controls select, .controls button {
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
 
-.add-btn {
-    background: #5b5bd6;
-    color: white;
-}
+        .controls input:focus, .controls select:focus {
+            border-color: #6366f1;
+        }
 
-.reset-btn {
-    background: #e05243;
-    color: white;
-}
+        #subject {
+            flex: 1;
+            min-width: 200px;
+        }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+        #day, #time {
+            min-width: 150px;
+        }
 
-th, td {
-    border: 1px solid #ddd;
-    text-align: center;
-    padding: 15px;
-}
+        .btn-add {
+            background-color: #5c51d5;
+            color: white;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 140px;
+        }
 
-th {
-    background: #f0f0f0;
-}
+        .btn-add:hover {
+            background-color: #4f46bb;
+        }
 
-.subject {
-    padding: 6px;
-    border-radius: 8px;
-    color: #333;
-    font-weight: bold;
-}
+        .btn-reset {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 140px;
+        }
 
-.math { background: #cfe0ff; }
-.physics { background: #d6f5d6; }
-.english { background: #fff0b3; }
-.history { background: #f5d6d6; }
-.cs { background: #d6f5e6; }
+        .btn-reset:hover {
+            background-color: #c9302c;
+        }
 
-</style>
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            text-align: center;
+            height: 70px;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #1e293b;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        td.time-col {
+            font-weight: 600;
+            color: #64748b;
+            width: 100px;
+        }
+
+        .event-card {
+            display: inline-block;
+            width: 90%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        /* Color Themes for Subjects */
+        .theme-blue {
+            background-color: #e6edff;
+            color: #3056d3;
+            border-left: 4px solid #3056d3;
+        }
+        .theme-green {
+            background-color: #e6fcf5;
+            color: #087f5b;
+            border-left: 4px solid #087f5b;
+        }
+        .theme-yellow {
+            background-color: #fef0c7;
+            color: #946c00;
+            border-left: 4px solid #946c00;
+        }
+        .theme-red {
+            background-color: #fce4e4;
+            color: #c92a2a;
+            border-left: 4px solid #c92a2a;
+        }
+        .theme-mint {
+            background-color: #e6ffed;
+            color: #1e824c;
+            border-left: 4px solid #1e824c;
+        }
+        .theme-purple {
+            background-color: #f3e8ff;
+            color: #7e22ce;
+            border-left: 4px solid #7e22ce;
+        }
+
+    </style>
 </head>
-
 <body>
 
 <div class="container">
@@ -102,116 +190,145 @@ th {
     <p class="subtitle">Manage your weekly subjects and lecture timings</p>
 
     <div class="controls">
-        <input type="text" id="subject" placeholder="Subject (e.g., Math)">
-        
+        <input type="text" id="subject" placeholder="Subject (e.g., Math, Scier">
         <select id="day">
-            <option>Monday</option>
-            <option>Tuesday</option>
-            <option>Wednesday</option>
-            <option>Thursday</option>
-            <option>Friday</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
         </select>
-
-        <select id="time">
-            <option>09:00</option>
-            <option>10:30</option>
-            <option>11:00</option>
-            <option>14:00</option>
-        </select>
-
-        <button class="add-btn" onclick="addSubject()">Add Subject</button>
-        <button class="reset-btn" onclick="resetTable()">Reset All</button>
+        <input type="time" id="time">
+        <button class="btn-add" id="addBtn">Add Subject</button>
+        <button class="btn-reset" id="resetBtn">Reset All</button>
     </div>
 
-    <table id="timetable">
-        <tr>
-            <th>Time</th>
-            <th>Monday</th>
-            <th>Tuesday</th>
-            <th>Wednesday</th>
-            <th>Thursday</th>
-            <th>Friday</th>
-        </tr>
-
-        <tr>
-            <td>09:00</td>
-            <td id="Monday-09:00"></td>
-            <td id="Tuesday-09:00"></td>
-            <td id="Wednesday-09:00"></td>
-            <td id="Thursday-09:00"></td>
-            <td id="Friday-09:00"></td>
-        </tr>
-
-        <tr>
-            <td>10:30</td>
-            <td id="Monday-10:30"></td>
-            <td id="Tuesday-10:30"></td>
-            <td id="Wednesday-10:30"></td>
-            <td id="Thursday-10:30"></td>
-            <td id="Friday-10:30"></td>
-        </tr>
-
-        <tr>
-            <td>11:00</td>
-            <td id="Monday-11:00"></td>
-            <td id="Tuesday-11:00"></td>
-            <td id="Wednesday-11:00"></td>
-            <td id="Thursday-11:00"></td>
-            <td id="Friday-11:00"></td>
-        </tr>
-
-        <tr>
-            <td>14:00</td>
-            <td id="Monday-14:00"></td>
-            <td id="Tuesday-14:00"></td>
-            <td id="Wednesday-14:00"></td>
-            <td id="Thursday-14:00"></td>
-            <td id="Friday-14:00"></td>
-        </tr>
-    </table>
+    <div class="table-wrapper">
+        <table id="timetable">
+            <thead>
+                <tr>
+                    <th>TIME</th>
+                    <th>MONDAY</th>
+                    <th>TUESDAY</th>
+                    <th>WEDNESDAY</th>
+                    <th>THURSDAY</th>
+                    <th>FRIDAY</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                </tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-function getClass(subject) {
-    subject = subject.toLowerCase();
-    if (subject.includes("math")) return "math";
-    if (subject.includes("physics")) return "physics";
-    if (subject.includes("english")) return "english";
-    if (subject.includes("history")) return "history";
-    if (subject.includes("computer")) return "cs";
-    return "";
-}
+    // Initial data matching the provided screenshot
+    let scheduleData = [
+        { subject: 'Mathematics', day: 'Monday', time: '09:00', theme: 'theme-blue' },
+        { subject: 'Physics', day: 'Tuesday', time: '09:00', theme: 'theme-mint' },
+        { subject: 'English', day: 'Wednesday', time: '10:30', theme: 'theme-yellow' },
+        { subject: 'History', day: 'Monday', time: '11:00', theme: 'theme-red' },
+        { subject: 'Computer Science', day: 'Friday', time: '14:00', theme: 'theme-green' }
+    ];
 
-function addSubject() {
-    let subject = document.getElementById("subject").value;
-    let day = document.getElementById("day").value;
-    let time = document.getElementById("time").value;
+    const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+    const themes = ['theme-blue', 'theme-green', 'theme-yellow', 'theme-red', 'theme-mint', 'theme-purple'];
 
-    if (subject === "") {
-        alert("Enter subject!");
-        return;
+    const tableBody = document.getElementById('tableBody');
+    const subjectInput = document.getElementById('subject');
+    const dayInput = document.getElementById('day');
+    const timeInput = document.getElementById('time');
+    const addBtn = document.getElementById('addBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    // Function to render the timetable grid
+    function renderTable() {
+        tableBody.innerHTML = '';
+
+        // Extract unique times and sort them
+        let times = [...new Set(scheduleData.map(item => item.time))];
+        times.sort();
+
+        // If no data exists, we can still show some empty default rows (optional)
+        if (times.length === 0) {
+            times = ['09:00', '10:30', '11:00', '14:00'];
+        }
+
+        times.forEach(time => {
+            const tr = document.createElement('tr');
+            
+            // Time Column
+            const timeTd = document.createElement('td');
+            timeTd.className = 'time-col';
+            timeTd.textContent = time;
+            tr.appendChild(timeTd);
+
+            // Day Columns
+            daysOfWeek.forEach(day => {
+                const td = document.createElement('td');
+                
+                // Find if an event exists for this day and time
+                const event = scheduleData.find(e => e.day === day && e.time === time);
+                
+                if (event) {
+                    const eventDiv = document.createElement('div');
+                    eventDiv.className = `event-card ${event.theme}`;
+                    eventDiv.textContent = event.subject;
+                    td.appendChild(eventDiv);
+                }
+                
+                tr.appendChild(td);
+            });
+
+            tableBody.appendChild(tr);
+        });
     }
 
-    let cell = document.getElementById(day + "-" + time);
+    // Add new subject handler
+    addBtn.addEventListener('click', () => {
+        const subject = subjectInput.value.trim();
+        const day = dayInput.value;
+        const time = timeInput.value;
 
-    let div = document.createElement("div");
-    div.className = "subject " + getClass(subject);
-    div.innerText = subject;
+        if (!subject || !time) {
+            alert('Please enter both a subject and a time.');
+            return;
+        }
 
-    cell.innerHTML = "";
-    cell.appendChild(div);
+        // Check for conflicts (optional feature, but prevents overlapping divs in our simple grid)
+        const conflict = scheduleData.find(e => e.day === day && e.time === time);
+        if (conflict) {
+            alert('A subject is already scheduled at this time on this day.');
+            return;
+        }
 
-    document.getElementById("subject").value = "";
-}
+        // Pick a random theme for the new subject
+        const randomTheme = themes[Math.floor(Math.random() * themes.length)];
 
-function resetTable() {
-    let cells = document.querySelectorAll("td");
-    cells.forEach(cell => {
-        if (!cell.innerText.match(/^\d/)) {
-            cell.innerHTML = "";
+        scheduleData.push({
+            subject,
+            day,
+            time,
+            theme: randomTheme
+        });
+
+        // Clear inputs after adding
+        subjectInput.value = '';
+        timeInput.value = '';
+        
+        renderTable();
+    });
+
+    // Reset all handler
+    resetBtn.addEventListener('click', () => {
+        if(confirm('Are you sure you want to remove all subjects?')) {
+            scheduleData = [];
+            renderTable();
         }
     });
-}
+
+    // Initial render
+    renderTable();
 </script>
 
 </body>
