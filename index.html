@@ -1,53 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart School Timetable</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>School Timetable 2026</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f4f7;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.controls input, .controls select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.controls button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.add-btn {
+    background: #5b5bd6;
+    color: white;
+}
+
+.reset-btn {
+    background: #e05243;
+    color: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    text-align: center;
+    padding: 15px;
+}
+
+th {
+    background: #f0f0f0;
+}
+
+.subject {
+    padding: 6px;
+    border-radius: 8px;
+    color: #333;
+    font-weight: bold;
+}
+
+.math { background: #cfe0ff; }
+.physics { background: #d6f5d6; }
+.english { background: #fff0b3; }
+.history { background: #f5d6d6; }
+.cs { background: #d6f5e6; }
+
+</style>
 </head>
+
 <body>
 
 <div class="container">
-    <header>
-        <h1>School Timetable and Schedule Management System 2026</h1>
-        <p>Manage your weekly subjects and lecture timings</p>
-    </header>
+    <h1>School Timetable and Schedule Management System 2026</h1>
+    <p class="subtitle">Manage your weekly subjects and lecture timings</p>
 
     <div class="controls">
-        <input type="text" id="subjectInput" placeholder="Subject (e.g., Math, Science)">
-        <select id="dayInput">
-            <option value="1">Monday</option>
-            <option value="2">Tuesday</option>
-            <option value="3">Wednesday</option>
-            <option value="4">Thursday</option>
-            <option value="5">Friday</option>
+        <input type="text" id="subject" placeholder="Subject (e.g., Math)">
+        
+        <select id="day">
+            <option>Monday</option>
+            <option>Tuesday</option>
+            <option>Wednesday</option>
+            <option>Thursday</option>
+            <option>Friday</option>
         </select>
-        <input type="time" id="timeInput">
-        <button onclick="handleAdd()">Add Subject</button>
-        <button class="btn-clear" onclick="clearAll()">Reset All</button>
+
+        <select id="time">
+            <option>09:00</option>
+            <option>10:30</option>
+            <option>11:00</option>
+            <option>14:00</option>
+        </select>
+
+        <button class="add-btn" onclick="addSubject()">Add Subject</button>
+        <button class="reset-btn" onclick="resetTable()">Reset All</button>
     </div>
 
-    <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr>
-                    <th class="time-col">Time</th>
-                    <th>Monday</th>
-                    <th>Tuesday</th>
-                    <th>Wednesday</th>
-                    <th>Thursday</th>
-                    <th>Friday</th>
-                </tr>
-            </thead>
-            <tbody id="timetableBody">
-                </tbody>
-        </table>
-    </div>
+    <table id="timetable">
+        <tr>
+            <th>Time</th>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+        </tr>
+
+        <tr>
+            <td>09:00</td>
+            <td id="Monday-09:00"></td>
+            <td id="Tuesday-09:00"></td>
+            <td id="Wednesday-09:00"></td>
+            <td id="Thursday-09:00"></td>
+            <td id="Friday-09:00"></td>
+        </tr>
+
+        <tr>
+            <td>10:30</td>
+            <td id="Monday-10:30"></td>
+            <td id="Tuesday-10:30"></td>
+            <td id="Wednesday-10:30"></td>
+            <td id="Thursday-10:30"></td>
+            <td id="Friday-10:30"></td>
+        </tr>
+
+        <tr>
+            <td>11:00</td>
+            <td id="Monday-11:00"></td>
+            <td id="Tuesday-11:00"></td>
+            <td id="Wednesday-11:00"></td>
+            <td id="Thursday-11:00"></td>
+            <td id="Friday-11:00"></td>
+        </tr>
+
+        <tr>
+            <td>14:00</td>
+            <td id="Monday-14:00"></td>
+            <td id="Tuesday-14:00"></td>
+            <td id="Wednesday-14:00"></td>
+            <td id="Thursday-14:00"></td>
+            <td id="Friday-14:00"></td>
+        </tr>
+    </table>
 </div>
 
-<script src="sd.js"></script>
+<script>
+function getClass(subject) {
+    subject = subject.toLowerCase();
+    if (subject.includes("math")) return "math";
+    if (subject.includes("physics")) return "physics";
+    if (subject.includes("english")) return "english";
+    if (subject.includes("history")) return "history";
+    if (subject.includes("computer")) return "cs";
+    return "";
+}
+
+function addSubject() {
+    let subject = document.getElementById("subject").value;
+    let day = document.getElementById("day").value;
+    let time = document.getElementById("time").value;
+
+    if (subject === "") {
+        alert("Enter subject!");
+        return;
+    }
+
+    let cell = document.getElementById(day + "-" + time);
+
+    let div = document.createElement("div");
+    div.className = "subject " + getClass(subject);
+    div.innerText = subject;
+
+    cell.innerHTML = "";
+    cell.appendChild(div);
+
+    document.getElementById("subject").value = "";
+}
+
+function resetTable() {
+    let cells = document.querySelectorAll("td");
+    cells.forEach(cell => {
+        if (!cell.innerText.match(/^\d/)) {
+            cell.innerHTML = "";
+        }
+    });
+}
+</script>
 
 </body>
 </html>
